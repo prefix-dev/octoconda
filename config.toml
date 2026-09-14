@@ -4310,6 +4310,7 @@ name = "openfga_cli"
 
 [[packages]]
 repository = "opengrep/opengrep"
+platforms = { linux-32 = "null", linux-64 = "manylinux_x86$", osx-64 = "osx_x86$", win-32 = "null", win-64 = 'windows_x86\.exe$' }
 
 [[packages]]
 repository = "openshift-online/ocm-cli"
