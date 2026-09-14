@@ -1,7 +1,12 @@
 #!/bin/bash
 set -e
 
-REPO="${1:?Usage: build_one.sh <owner/repo>}"
+REPO="${1:?Usage: build_one.sh <owner/repo> [--force]}"
+FORCE="${2:-}"
+if [ -n "${FORCE}" ] && [ "${FORCE}" != "--force" ]; then
+  echo "Usage: build_one.sh <owner/repo> [--force]" >&2
+  exit 2
+fi
 OUTPUT_DIR="test-output"
 
 # Wipe any artefacts from a previous run so the generator's File::create_new
@@ -11,7 +16,11 @@ rm -rf "${OUTPUT_DIR:?}"
 mkdir -p "${OUTPUT_DIR}"
 
 echo "==> Generating recipes for ${REPO} into ${OUTPUT_DIR}/"
-cargo run -- --filter "^${REPO}$" --work-dir "${OUTPUT_DIR}" --keep-temporary-data
+CARGO_ARGS=(--filter "^${REPO}$" --work-dir "${OUTPUT_DIR}" --keep-temporary-data)
+if [ "${FORCE}" = "--force" ]; then
+  CARGO_ARGS+=(--force)
+fi
+cargo run -- "${CARGO_ARGS[@]}"
 
 # Find and build all generated recipes (without uploading)
 mapfile -t RECIPES < <(find "${OUTPUT_DIR}" -type f -name recipe.yaml)

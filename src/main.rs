@@ -89,6 +89,13 @@ fn main() -> Result<(), anyhow::Error> {
                 })
                 .collect();
 
+            let empty_repo_packages = Vec::new();
+            let generation_repo_packages = if cli.force {
+                &empty_repo_packages
+            } else {
+                &repo_packages
+            };
+
             // Load persistent state (empty if no --state-file or first run).
             let cached_state = cli
                 .state_file
@@ -164,7 +171,7 @@ fn main() -> Result<(), anyhow::Error> {
             let result: Vec<package_generation::PackageResult> = stream::iter(repo_groups)
                 .map(|group| {
                     let gh = &gh;
-                    let repo_packages = &repo_packages;
+                    let repo_packages = generation_repo_packages;
                     let work_dir = temporary_directory.path();
                     async move {
                         let repo_ref = &group[0].repository;
