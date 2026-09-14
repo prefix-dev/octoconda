@@ -17,9 +17,6 @@ pub struct Cli {
     /// Only process repositories matching this regular expression
     #[arg(long)]
     pub filter: Option<regex::Regex>,
-    /// Generate recipes even when packages already exist in Conda.
-    #[arg(long)]
-    pub force: bool,
     /// Path to a JSON state file persisted between runs.
     /// Reduces GitHub API calls by skipping recently-checked packages.
     #[arg(long)]
