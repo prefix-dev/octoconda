@@ -1874,6 +1874,14 @@ repository = "fortio/fortio"
 repository = "foundry-rs/foundry"
 
 [[packages]]
+repository = "foxglove/mcap"
+
+[[packages.packages]]
+name = "mcap-cli"
+tag-prefix = "releases/mcap-cli/"
+release-prefix = "mcap"
+
+[[packages]]
 repository = "frain-dev/convoy"
 
 [[packages]]
