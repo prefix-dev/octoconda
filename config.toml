@@ -1625,6 +1625,9 @@ repository = "dyne/zenroom"
 repository = "earthly/earthly"
 
 [[packages]]
+repository = "earth-mover/core-drill"
+
+[[packages]]
 repository = "ebi-yade/ecresolve"
 
 [[packages]]
