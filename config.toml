@@ -2514,6 +2514,9 @@ repository = "Hmbown/Codewhale"
 repository = "hokaccha/spannerdef"
 
 [[packages]]
+repository = "home-operations/flate"
+
+[[packages]]
 repository = "homeport/dyff"
 
 [[packages]]
