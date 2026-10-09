@@ -4398,6 +4398,11 @@ repository = "out-of-cheese-error/the-way"
 repository = "oven-sh/bun"
 
 [[packages]]
+repository = "ovh/ovhcloud-cli"
+# Windows ZIPs are detected as raw data by file(1), producing broken packages.
+platforms = { win-32 = "null", win-64 = "null", win-arm64 = "null" }
+
+[[packages]]
 repository = "ovh/venom"
 
 [[packages]]
