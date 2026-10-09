@@ -20,6 +20,9 @@ echo "   ${RECIPE_COUNT} recipes found (shuffled)"
 count=0
 SUCCESS_PACKAGES=0
 FAILED_PACKAGES=0
+# Upload failures point at infrastructure (auth, trusted publishing, server)
+# rather than a broken upstream release, so they fail the job.
+UPLOAD_FAILED_PACKAGES=0
 
 shopt -s dotglob
 
@@ -36,7 +39,13 @@ for recipe in "${RECIPES[@]}"; do
           --generate-attestation \
           --target-platform="${platform}" 2>&1) \
     && SUCCESS_PACKAGES=$((SUCCESS_PACKAGES + 1)) \
-    || { FAILED_PACKAGES=$((FAILED_PACKAGES + 1)); echo "${BUILD_OUTPUT}"; }
+    || {
+      FAILED_PACKAGES=$((FAILED_PACKAGES + 1))
+      if [[ "${BUILD_OUTPUT}" == *"Failed to upload packages"* ]]; then
+        UPLOAD_FAILED_PACKAGES=$((UPLOAD_FAILED_PACKAGES + 1))
+      fi
+      echo "${BUILD_OUTPUT}"
+    }
   count=$((count + 1))
 
   # Clean up! We do not want to run out of storage
@@ -48,6 +57,13 @@ done
   echo "## Package build" ; \
   echo ; \
   echo "Success: ${SUCCESS_PACKAGES}, Failed: ${FAILED_PACKAGES} (Total: ${count})"; \
+  echo ; \
+  echo "Upload failures: ${UPLOAD_FAILED_PACKAGES}"; \
 } >> report.txt
 
 shopt -u dotglob
+
+if [ "${UPLOAD_FAILED_PACKAGES}" -gt 0 ]; then
+  echo "::error::${UPLOAD_FAILED_PACKAGES} package(s) were built but failed to upload to ${TARGET_CHANNEL}"
+  exit 1
+fi
