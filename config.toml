@@ -6506,9 +6506,6 @@ repository = "zellij-org/zellij"
 repository = "zerocore-ai/microsandbox"
 
 [[packages]]
-repository = "ziex-dev/ziex"
-
-[[packages]]
 repository = "zitadel/zitadel"
 
 [[packages]]
