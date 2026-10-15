@@ -3274,6 +3274,9 @@ repository = "kreuzwerker/envplate"
 repository = "kreuzwerker/m1-terraform-provider-helper"
 
 [[packages]]
+repository = "kristoff-it/zine"
+
+[[packages]]
 repository = "ktock/buildg"
 
 [[packages]]
@@ -6304,6 +6307,9 @@ repository = "westpoint-io/lazyrsync"
 
 [[packages]]
 repository = "wfxr/csview"
+
+[[packages]]
+repository = "wgsl-analyzer/wgsl-analyzer"
 
 [[packages]]
 repository = "whalebrew/whalebrew"
