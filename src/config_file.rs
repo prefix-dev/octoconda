@@ -8,7 +8,7 @@ use std::{
 };
 
 use anyhow::{Context, anyhow};
-use rattler_conda_types::Platform;
+use rattler_conda_types::Subdir as Platform;
 use serde::Deserialize;
 
 use crate::types::Repository;
