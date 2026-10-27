@@ -8,8 +8,8 @@ anyhow = "1.0.100"
 clap = { version = "4.5.51", features = ["derive"] }
 octocrab = { version = "0.54.0", features = ["stream"] }
 
-rattler_conda_types = "0.57.1"
-rattler_repodata_gateway = { version = "0.36.6", features = ["gateway"] }
+rattler_conda_types = "0.58.0"
+rattler_repodata_gateway = { version = "0.37.0", features = ["gateway"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0"
 toml = { version = "1.0", features = ["serde", "parse"] }
