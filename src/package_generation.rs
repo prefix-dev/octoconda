@@ -9,7 +9,7 @@ use std::{
 };
 
 use anyhow::Context as _;
-use rattler_conda_types::{Platform, VersionWithSource};
+use rattler_conda_types::{Subdir as Platform, VersionWithSource};
 
 use crate::config_file::Package;
 
@@ -67,7 +67,7 @@ TARGET_CHANNEL="{}"
 }
 
 pub struct PackagingStatus {
-    pub platform: Platform,
+    pub platform: String,
     pub reason: StatusReason,
 }
 
@@ -126,42 +126,42 @@ fn display_name(repository: &str, name: &str) -> String {
 impl PackagingStatus {
     pub fn recipe_generation_failed(platform: Platform, message: String) -> Self {
         Self {
-            platform,
+            platform: platform.to_string(),
             reason: StatusReason::RecipeGenerationFailed { message },
         }
     }
 
     pub fn invalid_version() -> Self {
         Self {
-            platform: Platform::Unknown,
+            platform: "unknown".to_string(),
             reason: StatusReason::InvalidVersion,
         }
     }
 
     pub fn already_in_conda(platform: Platform) -> Self {
         Self {
-            platform,
+            platform: platform.to_string(),
             reason: StatusReason::AlreadyInConda,
         }
     }
 
     pub fn no_platform_binary(platform: Platform) -> Self {
         Self {
-            platform,
+            platform: platform.to_string(),
             reason: StatusReason::NoBinaryForPlatformFound,
         }
     }
 
     pub fn success(platform: Platform) -> Self {
         Self {
-            platform,
+            platform: platform.to_string(),
             reason: StatusReason::RecipeGenerated,
         }
     }
 
-    pub fn in_conda_not_on_github(platform: Platform) -> Self {
+    pub fn in_conda_not_on_github(platform: &str) -> Self {
         Self {
-            platform,
+            platform: platform.to_string(),
             reason: StatusReason::NotOnGithub,
         }
     }
@@ -510,12 +510,12 @@ pub fn generate_packaging_data(
             continue;
         }
         let version_str = record.package_record.version.to_string();
-        let platform =
-            Platform::from_str(&record.package_record.subdir).unwrap_or(Platform::Unknown);
         conda_only
             .entry(version_str)
             .or_default()
-            .push(PackagingStatus::in_conda_not_on_github(platform));
+            .push(PackagingStatus::in_conda_not_on_github(
+                &record.package_record.subdir,
+            ));
     }
 
     for (version_str, statuses) in conda_only {
@@ -830,6 +830,19 @@ mod tests {
     use super::*;
 
     use crate::config_file::tests::get_patterns_for;
+
+    #[test]
+    fn test_packaging_status_platform_labels() {
+        assert_eq!(
+            PackagingStatus::success(Platform::Linux64).platform,
+            "linux-64"
+        );
+        assert_eq!(PackagingStatus::invalid_version().platform, "unknown");
+        assert_eq!(
+            PackagingStatus::in_conda_not_on_github("custom-platform").platform,
+            "custom-platform"
+        );
+    }
 
     #[test]
     fn test_recipe_executable_name_and_expose() {

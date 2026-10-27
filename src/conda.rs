@@ -2,7 +2,7 @@
 // © Tobias Hunger <tobias.hunger@gmail.com>
 
 use rattler_conda_types::{
-    Channel, ChannelConfig, MatchSpec, PackageNameMatcher, Platform, RepoDataRecord,
+    Channel, ChannelConfig, MatchSpec, PackageNameMatcher, RepoDataRecord, Subdir as Platform,
 };
 use rattler_repodata_gateway::Gateway;
 
