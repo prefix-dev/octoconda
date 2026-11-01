@@ -649,6 +649,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "csv"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "52cd9d68cf7efc6ddfaaee42e7288d3a99d613d4b50f76ce9827ae0c6e14f938"
+dependencies = [
+ "csv-core",
+ "itoa",
+ "ryu",
+ "serde_core",
+]
+
+[[package]]
+name = "csv-core"
+version = "0.1.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "704a3c26996a80471189265814dbc2c257598b96b8a7feae2d31ace646bb9782"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
 name = "ctutils"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1968,9 +1989,9 @@ dependencies = [
 
 [[package]]
 name = "octocrab"
-version = "0.54.4"
+version = "0.54.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c4a95a2ef78a1956cc22593932b9dcf8fbd8c62328d75d04026d8f0dc71bccae"
+checksum = "7fbdb31de79c08280bd199242722c8494a2e50992c14236f36749a9a301bde04"
 dependencies = [
  "arc-swap",
  "base64 0.22.1",
@@ -2073,6 +2094,18 @@ checksum = "1d30c53c26bc5b31a98cd02d20f25a7c8567146caf63ed593a9d87b2775291be"
 dependencies = [
  "base64 0.22.1",
  "serde_core",
+]
+
+[[package]]
+name = "pep440_rs"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "31095ca1f396e3de32745f42b20deef7bc09077f918b085307e8eab6ddd8fb9c"
+dependencies = [
+ "once_cell",
+ "serde",
+ "unicode-width",
+ "unscanny",
 ]
 
 [[package]]
@@ -2285,9 +2318,9 @@ dependencies = [
 
 [[package]]
 name = "rattler_cache"
-version = "0.10.21"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "46c5bc96265443f8172d4a6952ede94d17f0ecdbacb8ba802be24ac7571557c4"
+checksum = "2a7bf05d3a07f5f32ad323e60c37d3ff9477094bf651e2d787fc04d3f8242b2b"
 dependencies = [
  "ahash",
  "anyhow",
@@ -2406,9 +2439,9 @@ dependencies = [
 
 [[package]]
 name = "rattler_networking"
-version = "0.34.3"
+version = "0.34.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ca0534e1e49cb2290487614476e37a2c1559f4f80c937524affed4d7e69b820"
+checksum = "c03fd9028df13cdd83d104c12123121d5be02ae655eac597a5082db685045a9a"
 dependencies = [
  "ambient-id",
  "astral-reqwest-middleware",
@@ -2434,17 +2467,19 @@ dependencies = [
 
 [[package]]
 name = "rattler_package_streaming"
-version = "0.27.16"
+version = "0.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80a80e0a596ff9c4dd95b9c4e3b0fbb40aafe44ae2cbda98a308e46853ca9bfe"
+checksum = "f8554afa7376c3f48f723f0c32e56df826ac241a681d808633a40e241742ea91"
 dependencies = [
  "astral-reqwest-middleware",
  "astral-tokio-tar",
  "astral_async_http_range_reader",
  "astral_async_zip",
  "async-compression",
+ "base64 0.22.1",
  "bytes",
  "bzip2",
+ "csv",
  "filetime",
  "fs-err",
  "futures",
@@ -2454,11 +2489,13 @@ dependencies = [
  "hex",
  "http",
  "jiff",
+ "pep440_rs",
  "rattler_conda_types",
  "rattler_digest",
  "rattler_networking",
  "rattler_redaction",
  "reqwest",
+ "serde",
  "serde_json",
  "simple_spawn_blocking",
  "tar",
@@ -2485,9 +2522,9 @@ dependencies = [
 
 [[package]]
 name = "rattler_repodata_gateway"
-version = "0.37.0"
+version = "0.37.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb6590446cc002dd10bc6cd68cfb16fba32a1a34d3282e653e67a2c139807571"
+checksum = "f2860cb5ad7ea8e31d6db62a6ee655a0d73240e988ba645feed17b4f473b590b"
 dependencies = [
  "ahash",
  "anyhow",
@@ -3459,9 +3496,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.53.3"
+version = "1.54.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
 dependencies = [
  "bytes",
  "libc",
@@ -3676,10 +3713,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
 
 [[package]]
+name = "unicode-width"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca718471876992059f251e33aafc334346ada08042b7661dd1fe313a9bced557"
+
+[[package]]
 name = "unsafe-libyaml"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "673aac59facbab8a9007c7f6108d11f63b603f7cabff99fabf650fea5c32b861"
+
+[[package]]
+name = "unscanny"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9df2af067a7953e9c3831320f35c1cc0600c30d44d9f7a12b01db1cd88d6b47"
 
 [[package]]
 name = "untrusted"
