@@ -3505,6 +3505,7 @@ repository = "liggitt/audit2rbac"
 
 [[packages]]
 repository = "lima-vm/lima"
+expose = ["libexec"]
 
 [[packages]]
 repository = "lima-vm/sshocker"
@@ -6560,3 +6561,11 @@ repository = "Zxilly/go-size-analyzer"
 
 [[packages]]
 repository = "zyedidia/eget"
+
+[[packages]]
+repository = "tursodatabase/turso"
+release-prefix = "turso_cli"
+
+[[packages]]
+repository = "boxlite-ai/boxlite"
+release-prefix = "boxlite-cli"
