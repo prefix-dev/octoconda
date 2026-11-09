@@ -1356,6 +1356,9 @@ repository = "dandavison/delta"
 repository = "DanielCardonaRojas/codemark"
 
 [[packages]]
+repository = "danieleades/mdbook-d2"
+
+[[packages]]
 repository = "danielfoehrKn/kubeswitch"
 
 [[packages]]
