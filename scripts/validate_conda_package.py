@@ -79,8 +79,14 @@ FORMAT_NAMES = {"elf": "ELF", "macho": "Mach-O", "pe": "PE"}
 KNOWN_TOP_LEVEL_DIRS = {"bin", "etc", "extras", "include", "lib", "share", "ssl"}
 
 WINDOWS_PROGRAM_SUFFIXES = (".exe", ".bat", ".cmd", ".com", ".ps1")
+DYNAMIC_LIBRARY_SUFFIXES = (".dylib", ".dll")
 
 HEADER_BYTES = 4096
+
+
+def _is_dynamic_library(path: str) -> bool:
+    name = posixpath.basename(path).lower()
+    return name.endswith(DYNAMIC_LIBRARY_SUFFIXES) or ".so." in name or name.endswith(".so")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -385,11 +391,14 @@ def _check_layout(entries: list[Entry], subdir: str, version: str | None, report
             report.warn(f"macOS junk file in package: {e.path}")
 
     bin_files = [e for e in files if e.path.startswith("bin/")]
-    bin_programs = [e for e in bin_files if e.path.count("/") == 1]
+    bin_programs = [
+        e for e in bin_files
+        if e.path.count("/") == 1 and not _is_dynamic_library(e.path)
+    ]
     if not bin_files:
         report.error("bin/ is missing or empty; nothing would end up on PATH")
     elif not bin_programs:
-        report.error("bin/ contains only subdirectories; nothing would end up on PATH")
+        report.error("bin/ contains no runnable program")
 
     is_windows = subdir.startswith("win-")
     runnable = 0
@@ -745,7 +754,24 @@ def _test_layout_problems():
         _assert_error(report, "bin/ is missing or empty")
 
         report = _validate_synthetic(tmp, {"bin/nested/tool": (_fake_elf(62), 0o755)})
-        _assert_error(report, "bin/ contains only subdirectories")
+        _assert_error(report, "bin/ contains no runnable program")
+
+        report = _validate_synthetic(tmp, {
+            "bin/tool": (_fake_elf(62), 0o755),
+            "bin/libhelper.so.1": (_fake_elf(62), 0o644),
+        })
+        assert report.ok, report.errors
+        assert not report.warnings, report.warnings
+
+        for library in ["libhelper.so", "libhelper.dylib", "helper.dll"]:
+            report = _validate_synthetic(tmp, {f"bin/{library}": (_fake_elf(62), 0o644)})
+            _assert_error(report, "bin/ contains no runnable program")
+
+        report = _validate_synthetic(tmp, {
+            "bin/tool": (_fake_elf(62), 0o755),
+            "bin/libhelper.so": (_fake_elf(183), 0o644),
+        })
+        _assert_error(report, "bin/libhelper.so is built for aarch64")
 
         report = _validate_synthetic(tmp, {"bin/tool": (_fake_elf(62), 0o644)})
         _assert_error(report, "has no executable bit")

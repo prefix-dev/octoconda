@@ -917,6 +917,111 @@ mod tests {
 
     #[cfg(unix)]
     #[test]
+    fn test_build_script_preserves_top_level_dynamic_library_layout() {
+        use std::os::unix::fs::PermissionsExt;
+        use std::process::Command;
+
+        let work_dir = tempfile::tempdir().unwrap();
+        let prefix = work_dir.path().join("prefix");
+        let fixture = work_dir.path().join("fixture");
+        let tools = work_dir.path().join("tools");
+        std::fs::create_dir(&prefix).unwrap();
+        std::fs::create_dir(&fixture).unwrap();
+        std::fs::create_dir(&tools).unwrap();
+        generate_build_script(work_dir.path()).unwrap();
+
+        let files = [
+            "msb-1.0.0",
+            "libkrunfw.5.dylib",
+            "libhelper-1.0.0.so",
+            "libversioned.so.5",
+            "libexecutable.so",
+            "helper.DLL",
+            "README.txt",
+        ];
+        for name in files {
+            std::fs::write(fixture.join(name), name).unwrap();
+        }
+        std::fs::set_permissions(
+            fixture.join("libexecutable.so"),
+            std::fs::Permissions::from_mode(0o755),
+        )
+        .unwrap();
+
+        let file_shim = tools.join("file");
+        std::fs::write(
+            &file_shim,
+            "#!/bin/sh\nif [ \"$1\" = -b ]; then\n  echo 'POSIX tar archive'\nelif [ \"${1##*/}\" = msb-1.0.0 ]; then\n  echo \"$1: Mach-O 64-bit executable\"\nelse\n  echo \"$1: data\"\nfi\n",
+        )
+        .unwrap();
+        std::fs::set_permissions(&file_shim, std::fs::Permissions::from_mode(0o755)).unwrap();
+
+        let seven_zip_shim = tools.join("7zz");
+        std::fs::write(
+            &seven_zip_shim,
+            "#!/bin/sh\ncp -p \"$FIXTURE_DIR\"/* \"$PREFIX\"/\n",
+        )
+        .unwrap();
+        std::fs::set_permissions(
+            &seven_zip_shim,
+            std::fs::Permissions::from_mode(0o755),
+        )
+        .unwrap();
+
+        std::fs::write(
+            work_dir.path().join("microsandbox-1.0.0-osx-arm64"),
+            b"archive fixture",
+        )
+        .unwrap();
+        let path = format!(
+            "{}:{}",
+            tools.display(),
+            std::env::var("PATH").unwrap_or_default()
+        );
+        let output = Command::new("bash")
+            .arg("build.sh")
+            .current_dir(work_dir.path())
+            .env("PATH", path)
+            .env("FIXTURE_DIR", &fixture)
+            .env("PREFIX", &prefix)
+            .env("PKG_NAME", "microsandbox")
+            .env("PKG_VERSION", "1.0.0")
+            .env("target_platform", "osx-arm64")
+            .env_remove("OCTOCONDA_EXECUTABLE_NAME")
+            .env_remove("OCTOCONDA_EXPOSE")
+            .output()
+            .expect("run build.sh with Bash");
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+
+        let bin = prefix.join("bin");
+        assert!(bin.join("msb").is_file());
+        for library in [
+            "libkrunfw.5.dylib",
+            "libhelper-1.0.0.so",
+            "libversioned.so.5",
+            "libexecutable.so",
+            "helper.DLL",
+        ] {
+            assert!(bin.join(library).is_file(), "{library} was not kept in bin");
+            assert!(!prefix.join("extras").join(library).exists());
+        }
+        assert_eq!(
+            std::fs::metadata(bin.join("libkrunfw.5.dylib"))
+                .unwrap()
+                .permissions()
+                .mode()
+                & 0o111,
+            0
+        );
+        assert!(prefix.join("extras/README.txt").is_file());
+    }
+
+    #[cfg(unix)]
+    #[test]
     fn test_build_script_bare_executable_names() {
         use std::os::unix::fs::PermissionsExt;
         use std::process::Command;
