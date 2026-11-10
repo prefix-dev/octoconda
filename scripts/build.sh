@@ -93,43 +93,55 @@ while [ "$(find . -mindepth 1 -maxdepth 1 -type d -not -name conda-meta | wc -l)
     fi
 done
 
-# Move all executable files into bin
+# Move top-level programs and their runtime libraries into bin
 mkdir -p bin
 mkdir -p extras
 
+is_dynamic_library() {
+    case "$1" in
+    *.[sS][oO]|*.[sS][oO].*|*.[dD][yY][lL][iI][bB]|*.[dD][lL][lL]) return 0 ;;
+    *) return 1 ;;
+    esac
+}
+
 for f in *; do
     if test -f "${f}"; then
-        if file "${f}" | grep "executable"; then
-            chmod 755 "${f}"
-        fi
-
-        if test -x "${f}"; then
+        if is_dynamic_library "${f}"; then
+            # Keep top-level runtime libraries beside executables moved into bin.
             mv "${f}" bin
         else
-            case "$f" in
-            *.exe|*.bat|*.com)
+            if file "${f}" | grep "executable"; then
+                chmod 755 "${f}"
+            fi
+
+            if test -x "${f}"; then
                 mv "${f}" bin
-                ;;
-            *.[1-9]|*.[1-9][a-z])
-                # Man page — compress and move to share/man/manN/
-                section="${f##*.}"
-                section="${section%[a-z]}"
-                mkdir -p "share/man/man${section}"
-                gzip -c "${f}" > "share/man/man${section}/${f}.gz"
-                rm "${f}"
-                ;;
-            *.[1-9].gz|*.[1-9][a-z].gz)
-                # Already-compressed man page — move to share/man/manN/
-                base="${f%.gz}"
-                section="${base##*.}"
-                section="${section%[a-z]}"
-                mkdir -p "share/man/man${section}"
-                mv "${f}" "share/man/man${section}/"
-                ;;
-            *)
-                mv "${f}" extras
-                ;;
-            esac
+            else
+                case "$f" in
+                *.exe|*.bat|*.com)
+                    mv "${f}" bin
+                    ;;
+                *.[1-9]|*.[1-9][a-z])
+                    # Man page — compress and move to share/man/manN/
+                    section="${f##*.}"
+                    section="${section%[a-z]}"
+                    mkdir -p "share/man/man${section}"
+                    gzip -c "${f}" > "share/man/man${section}/${f}.gz"
+                    rm "${f}"
+                    ;;
+                *.[1-9].gz|*.[1-9][a-z].gz)
+                    # Already-compressed man page — move to share/man/manN/
+                    base="${f%.gz}"
+                    section="${base##*.}"
+                    section="${section%[a-z]}"
+                    mkdir -p "share/man/man${section}"
+                    mv "${f}" "share/man/man${section}/"
+                    ;;
+                *)
+                    mv "${f}" extras
+                    ;;
+                esac
+            fi
         fi
     elif test -d "${f}"; then
         case "${f}" in
@@ -160,6 +172,10 @@ done
 cd "${PREFIX}/bin" || exit
 
 for f in *; do
+    # Libraries must keep their full loader-facing filenames.
+    if is_dynamic_library "$f"; then
+        continue
+    fi
     # An explicit bare-binary name must not be shortened as a versioned filename.
     if [ "$f" = "$BARE_EXECUTABLE" ]; then
         continue
