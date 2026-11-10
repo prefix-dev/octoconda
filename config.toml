@@ -6526,7 +6526,8 @@ repository = "zegl/kube-score"
 repository = "zellij-org/zellij"
 
 [[packages]]
-repository = "zerocore-ai/microsandbox"
+repository = "superradcompany/microsandbox"
+release-prefix = "microsandbox"
 
 [[packages]]
 repository = "zitadel/zitadel"
@@ -6572,3 +6573,9 @@ release-prefix = "turso_cli"
 [[packages]]
 repository = "boxlite-ai/boxlite"
 release-prefix = "boxlite-cli"
+
+[[packages]]
+repository = "saghul/txiki.js"
+
+[[packages]]
+repository = "rathole-org/rathole"
