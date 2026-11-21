@@ -711,6 +711,10 @@ platforms = { linux-64 = "^borg-linux-glibc235-x86_64-gh", linux-aarch64 = "borg
 repository = "boxdot/gurk-rs"
 
 [[packages]]
+repository = "boxlite-ai/boxlite"
+release-prefix = "boxlite-cli"
+
+[[packages]]
 repository = "boyter/scc"
 
 [[packages]]
@@ -1524,6 +1528,10 @@ repository = "dmmulroy/jj-starship"
 repository = "dmtrKovalenko/blendr"
 
 [[packages]]
+repository = "dmtrKovalenko/fff"
+release-prefix = "fff-mcp"
+
+[[packages]]
 repository = "dnnrly/abbreviate"
 
 [[packages]]
@@ -1625,14 +1633,10 @@ repository = "dyne/slangroom-exec"
 repository = "dyne/zenroom"
 
 [[packages]]
-repository = "dmtrKovalenko/fff"
-release-prefix = "fff-mcp"
+repository = "earth-mover/core-drill"
 
 [[packages]]
 repository = "earthly/earthly"
-
-[[packages]]
-repository = "earth-mover/core-drill"
 
 [[packages]]
 repository = "ebi-yade/ecresolve"
@@ -4062,6 +4066,9 @@ repository = "Myriad-Dreamin/tinymist"
 repository = "n0-computer/dumbpipe"
 
 [[packages]]
+repository = "n0-computer/pigeons"
+
+[[packages]]
 repository = "n0-computer/sendme"
 
 [[packages]]
@@ -6105,6 +6112,10 @@ repository = "turbot/steampipe"
 repository = "turbot/tailpipe"
 
 [[packages]]
+repository = "tursodatabase/turso"
+release-prefix = "turso_cli"
+
+[[packages]]
 repository = "TurtleTech-ehf/snapper"
 name = "snapper-fmt"
 
@@ -6564,11 +6575,3 @@ repository = "Zxilly/go-size-analyzer"
 
 [[packages]]
 repository = "zyedidia/eget"
-
-[[packages]]
-repository = "tursodatabase/turso"
-release-prefix = "turso_cli"
-
-[[packages]]
-repository = "boxlite-ai/boxlite"
-release-prefix = "boxlite-cli"
