@@ -4066,6 +4066,9 @@ repository = "Myriad-Dreamin/tinymist"
 repository = "n0-computer/dumbpipe"
 
 [[packages]]
+repository = "n0-computer/pigeons"
+
+[[packages]]
 repository = "n0-computer/sendme"
 
 [[packages]]
